@@ -1,9 +1,17 @@
 import React, { Component } from 'react';
 import { View, FlatList, Text } from 'react-native';
-import { ListItem } from 'react-native-elements';
+import { ListItem, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
+import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
+import { deleteFavorite } from '../redux/ActionCreators';
+
+const mapDispatchToProps = dispatch => {
+    return {
+        deleteFavorite: (dishId) => dispatch(deleteFavorite(dishId))
+    };
+}
 
 const mapStateToProps = state => {
     return {
@@ -18,14 +26,22 @@ class Favorites extends Component {
 
         const renderMenuItem = ({ item, index }) => {
             return(
-                <ListItem
-                    key='index'
-                    title={item.name}
-                    subtitle={item.description}
-                    hideChevron={true}
-                    onPress={() => navigate('DishDetail', { dishId: item.id })}
-                    leftAvatar={{ source: { uri: baseUrl + item.image }}} 
-                />
+                <SwipeRow rightOpenValue={-75}>
+                    <View style={{ marginLeft: 285, width: 75}}>
+                        <Button title='Delete' 
+                            buttonStyle={{ backgroundColor: '#c90202', height: 70}}
+                            onPress={() => {this.props.deleteFavorite(item.id)}} />
+                    </View>
+                    <View>
+                        <ListItem
+                            key={index}
+                            title={item.name}
+                            hideChevron={true}
+                            onPress={() => navigate('DishDetail', { dishId: item.id })}
+                            leftAvatar={{ source: { uri: baseUrl + item.image }}} 
+                        />
+                    </View>
+                </SwipeRow>
             );
         }
 
@@ -40,7 +56,7 @@ class Favorites extends Component {
 
         else 
             return(
-                <FlatList 
+                <SwipeListView 
                     data={this.props.dishes.dishes.filter(dish => this.props.favorites.some(el => el === dish.id))}
                     renderItem={renderMenuItem}
                     keyExtractor={item => item.id.toString()}
@@ -49,4 +65,4 @@ class Favorites extends Component {
     }
 }
 
-export default connect(mapStateToProps)(Favorites);
+export default connect(mapStateToProps, mapDispatchToProps)(Favorites);
