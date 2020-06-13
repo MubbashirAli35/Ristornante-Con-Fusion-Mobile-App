@@ -6,6 +6,7 @@ import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
 import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 import { deleteFavorite } from '../redux/ActionCreators';
+import * as Animatable from 'react-native-animatable';
 
 const mapDispatchToProps = dispatch => {
     return {
@@ -26,39 +27,41 @@ class Favorites extends Component {
 
         const renderMenuItem = ({ item, index }) => {
             return(
-                <SwipeRow rightOpenValue={-75}>
-                    <View style={{ marginLeft: 285, width: 75}}>
-                        <Button title='Delete' 
-                            buttonStyle={{ backgroundColor: '#c90202', height: 70}}
-                            onPress={() => {
-                                Alert.alert(
-                                    'Delete Favorite',
-                                    'Are you sure you want to delete ' + item.name + ' from your favorites?',
-                                    [
-                                        {
-                                            text: 'Cancel',
-                                            onPress: () => {console.log(item.name + ' not deleted')},
-                                            style: 'cancel'
-                                        },
-                                        {
-                                            text: 'OK',
-                                            onPress: () => {this.props.deleteFavorite(item.id)},
-                                        }
-                                    ],
-                                    {cancelable: false}
-                                )
-                            }} />
-                    </View>
-                    <View>
-                        <ListItem
-                            key={index}
-                            title={item.name}
-                            hideChevron={true}
-                            onPress={() => navigate('DishDetail', { dishId: item.id })}
-                            leftAvatar={{ source: { uri: baseUrl + item.image }}} 
-                        />
-                    </View>
-                </SwipeRow>
+                <Animatable.View animation='fadeInRightBig' duration={2000} >
+                    <SwipeRow rightOpenValue={-75}>
+                        <View style={{ marginLeft: 285, width: 75}}>
+                            <Button title='Delete' 
+                                buttonStyle={{ backgroundColor: '#c90202', height: 70}}
+                                onPress={() => {
+                                    Alert.alert(
+                                        'Delete Favorite',
+                                        'Are you sure you want to delete ' + item.name + ' from your favorites?',
+                                        [
+                                            {
+                                                text: 'Cancel',
+                                                onPress: () => {console.log(item.name + ' not deleted')},
+                                                style: 'cancel'
+                                            },
+                                            {
+                                                text: 'OK',
+                                                onPress: () => {this.props.deleteFavorite(item.id)},
+                                            }
+                                        ],
+                                        {cancelable: false}
+                                    )
+                                }} />
+                        </View>
+                        <View>
+                            <ListItem
+                                key={index}
+                                title={item.name}
+                                hideChevron={true}
+                                onPress={() => navigate('DishDetail', { dishId: item.id })}
+                                leftAvatar={{ source: { uri: baseUrl + item.image }}} 
+                            />
+                        </View>
+                    </SwipeRow>
+                </Animatable.View>
             );
         }
 
