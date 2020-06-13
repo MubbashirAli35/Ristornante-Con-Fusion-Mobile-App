@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, FlatList, Text } from 'react-native';
+import { View, Alert, Text } from 'react-native';
 import { ListItem, Button } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -30,7 +30,24 @@ class Favorites extends Component {
                     <View style={{ marginLeft: 285, width: 75}}>
                         <Button title='Delete' 
                             buttonStyle={{ backgroundColor: '#c90202', height: 70}}
-                            onPress={() => {this.props.deleteFavorite(item.id)}} />
+                            onPress={() => {
+                                Alert.alert(
+                                    'Delete Favorite',
+                                    'Are you sure you want to delete ' + item.name + ' from your favorites?',
+                                    [
+                                        {
+                                            text: 'Cancel',
+                                            onPress: () => {console.log(item.name + ' not deleted')},
+                                            style: 'cancel'
+                                        },
+                                        {
+                                            text: 'OK',
+                                            onPress: () => {this.props.deleteFavorite(item.id)},
+                                        }
+                                    ],
+                                    {cancelable: false}
+                                )
+                            }} />
                     </View>
                     <View>
                         <ListItem
