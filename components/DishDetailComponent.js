@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useRef } from 'react';
 import { Text, View, ScrollView, StyleSheet, Modal, Button, Alert, PanResponder } from 'react-native';
 import { Card, Icon, Rating, Input } from 'react-native-elements';
 import { DISHES } from '../shared/dishes';
@@ -26,16 +26,21 @@ const mapStateToProps = state => {
 
 function RenderDish(props) {
     const dish = props.dish;
+    const viewRef = useRef(null);
 
     const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
-        if(dx < -200)
+        if(dx < -100)
             return true;
         else 
             return false;
     }
 
+
     const panResponder = PanResponder.create({
-        onStartShouldSetPanResponder: (e, gestureState) => {return true; },
+        onStartShouldSetPanResponder: (e, gestureState) => {return true; }, 
+        onPanResponderGrant: () => {
+            viewRef.current.rubberBand(1000);
+        },
         onPanResponderEnd: (e, gestureState) => {
             if(recognizeDrag(gestureState))
                 Alert.alert(
@@ -59,7 +64,9 @@ function RenderDish(props) {
 
     if(dish != null) {
         return(
-            <Animatable.View animation='fadeInDown' duration={1000} delay={1000} {...panResponder.panHandlers} >
+            <Animatable.View animation='fadeInDown' duration={1000} delay={1000} 
+                {...panResponder.panHandlers}
+                ref={viewRef} >
                 <Card featuredTitle={dish.name}
                     image={{ uri: baseUrl + dish.image}}>
                     <Text style={{margin: 10}}>
