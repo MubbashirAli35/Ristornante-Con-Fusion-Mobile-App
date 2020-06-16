@@ -3,6 +3,8 @@ import { Text, View, StyleSheet, Switch, Button, Alert } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import { Picker } from '@react-native-community/picker';
 import * as Animatable from 'react-native-animatable';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
 
 class Reservation extends Component {
     constructor(props) {
@@ -24,7 +26,10 @@ class Reservation extends Component {
             [
                 {
                     text: 'OK',
-                    onPress: () => this.resetForm()
+                    onPress: () => { 
+                        this.presentLocalNotification(this.state.date);
+                        this.resetForm();
+                    }
                 },
                 {
                     text: 'Cancel',
@@ -41,6 +46,45 @@ class Reservation extends Component {
             guests: 1,
             smoking: false,
             date: ''
+        });
+    }
+
+    async obtainNotificationPermission() {
+        let permission = await Permissions.getAsync(Permissions.USER_FACING_NOTIFICATIONS);
+
+        if(permission !== 'granted') {
+            permission = await Permissions.askAsync(Permissions.USER_FACING_NOTIFICATIONS);
+
+            if(permission.status !== 'granted') {
+                Alert.alert(
+                    'Permission not granted to show notifications'
+                );
+            }
+        }
+
+        return permission;
+    }
+
+    async presentLocalNotification(date) {
+        await this.obtainNotificationPermission();
+        Notifications.createChannelAndroidAsync(
+            'default',
+            {
+                name: 'default',
+                sound: true,
+                vibrate: true,
+            }
+        );
+        Notifications.presentLocalNotificationAsync({
+            title: 'Your Reservation',
+            body: 'Reservation for ' + date + ' requested',
+            ios: {
+                sound: true,
+            },
+            android: {
+                color: '#512DA8',
+                channelId: 'default'
+            },
         });
     }
 
