@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import { Icon } from 'react-native-elements';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { fetchComments, fetchDishes, fetchPromos, fetchLeaders} from '../redux/ActionCreators';
+import TabNavigationComponent from './LoginComponent';
 
 const mapDispatchToProps = dispatch => {
     return {fetchDishes: () => dispatch(fetchDishes()),
@@ -140,7 +141,7 @@ function LoginNavigatior({ navigation }) {
             {/*<Stack.Screen name="Menu" component={() => <Menu dishes={props.dishes} onPress={props.onDishPress}
                                                              navigation={props.navigation} />} /> */}
 
-            <Stack.Screen name="Login" component={Login} options={{ title: 'Login', headerLeft: () => {return(<Icon name='menu' size={24} color='white' onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} />);} }} />
+            <Stack.Screen name="Login" component={TabNavigationComponent} options={{ title: 'Login', headerLeft: () => {return(<Icon name='menu' size={24} color='white' onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} />);} }} />
 
         </Stack.Navigator>
     );
