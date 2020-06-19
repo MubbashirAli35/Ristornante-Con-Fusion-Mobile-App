@@ -5,6 +5,7 @@ import { Picker } from '@react-native-community/picker';
 import * as Animatable from 'react-native-animatable';
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
+import * as Calendar from 'expo-calendar';
 
 class Reservation extends Component {
     constructor(props) {
@@ -38,7 +39,43 @@ class Reservation extends Component {
                 }
             ],
             { cancelable: false }
-        )
+        );
+
+        this.addReservationToCalendar(this.state.date);
+    }
+
+    addReservationToCalendar = async (date) => {
+        const calendarPermission = await Calendar.requestCalendarPermissionsAsync();
+
+        if(calendarPermission.status === 'granted') {
+            let calendarId = await Calendar.createCalendarAsync({
+                title: 'mubbashirali35@gmail.com',
+                color: '#9FE1E7',
+                source: {
+                    isLocalAccount: false,
+                    name: 'mubbashirali35@gmail.com',
+                    type: 'com.google'
+                },
+                name: 'mubbashirali35@gmail.com',
+                ownerAccount: 'mubbashirali35@gmail.com',
+                isSynced: true,
+                isVisible: true,
+                accessLevel: 'owner'
+            });
+
+            console.log(calendarId);
+
+            await Calendar.createEventAsync(
+                calendarId,
+                {
+                    title: 'Con Fusion Table Reservation',
+                    startDate: new Date(Date.parse(date)),
+                    endDate: new Date(Date.parse(date) + (2 * 60 * 60 * 1000)),
+                    timeZone: 'Asia/Hong_Kong',
+                    location: '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong'
+                }
+            );
+        }
     }
 
     resetForm() {
